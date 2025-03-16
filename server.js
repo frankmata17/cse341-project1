@@ -4,9 +4,13 @@ const swaggerUi = require('swagger-ui-express');
 const swaggerJsdoc = require('swagger-jsdoc');
 require('dotenv').config();
 
+const cors = require('cors');
+
+
 const app = express();
 app.use(express.json());
 
+app.use(cors());
 // MongoDB Connection
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("🔥 MongoDB connected!"))
