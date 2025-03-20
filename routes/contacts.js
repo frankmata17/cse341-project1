@@ -108,7 +108,7 @@ router.get('/:id', async (req, res) => {
  *       201:
  *         description: Contact created successfully
  *       400:
- *         description: Missing required fields
+ *         description: Validation error or missing required fields
  *       500:
  *         description: Server error
  */
@@ -124,6 +124,11 @@ router.post('/', async (req, res) => {
     await newContact.save();
     res.status(201).json({ message: 'Contact created successfully', id: newContact._id });
   } catch (err) {
+    // If the error is a validation error (like a unique email violation)
+    if (err.name === 'ValidationError') {
+      return res.status(400).json({ message: 'Validation error', error: err.message });
+    }
+    // Other errors (e.g., database issues)
     res.status(500).json({ message: 'Error creating contact', error: err.message });
   }
 });
@@ -151,7 +156,7 @@ router.post('/', async (req, res) => {
  *       200:
  *         description: Contact updated successfully
  *       400:
- *         description: Missing required fields
+ *         description: Validation error or missing required fields
  *       404:
  *         description: Contact not found
  *       500:
@@ -177,6 +182,11 @@ router.put('/:id', async (req, res) => {
 
     res.status(200).json({ message: 'Contact updated successfully', contact: updatedContact });
   } catch (err) {
+    // If it's a validation error
+    if (err.name === 'ValidationError') {
+      return res.status(400).json({ message: 'Validation error', error: err.message });
+    }
+    // Other errors
     res.status(500).json({ message: 'Error updating contact', error: err.message });
   }
 });
